@@ -203,7 +203,7 @@
 
 
         <!-- Rodapé com fotrmulário -->
-        <footer class="row text-light bg-verde big-round">
+        <footer class="row text-light bg-verde big-round p-5">
             <div class="col-md">
                 Endereços de contato
             </div>
@@ -212,10 +212,10 @@
             </div>
             <div class="col-md">
                 <!-- formulário de cadastro -->
-                <form action="processador.php" class="mt-5 mb-5" method="post">
+                <form action="https://formspree.io/f/xpwlzbvz" class="mt-5 mb-5" method="post">
                     <div class="mb-3">
                         <label for="" class="form-label">Nome</label>
-                        <input type="text" class="form-control" name="nome" id="nome" placeholder="Digite seu nome" />
+                        <input type="text" class="form-control" name="nome" id="nome" required placeholder="Digite seu nome" />
                     </div>
 
                     <div class="mb-3">
@@ -240,13 +240,38 @@
 
                     <div class="mb-3">
                         <label for="estados" class="form-label">Estados</label>
-                        <select class="form-select form-select-lg" name="estados" id="estados">
-                            
+                        <select onchange="listarCidades()" class="form-select form-select-lg" name="estados" id="estados">                
                         </select>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="cidades" class="form-label">Cidades</label>
+                        <select
+                            class="form-select form-select-lg"
+                            name="cidades"
+                            id="cidades"
+                        >                            
+                        </select>
+                    </div>
 
+                    <div class="mb-3">
+                        <label for="idade" class="form-label">Idade</label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            name="idade"
+                            max="120"
+                            min="0"                        
+                        />
+                    </div>
 
+                    <div class="mb-3">
+                        <label for="mensagem" class="form-label">Mensagem</label>
+                        <textarea class="form-control" name="mensagem" rows="3">
+                        </textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-light rounded-pill">Enviar</button>
 
                 </form>
             </div>
@@ -277,39 +302,50 @@
             let options = '<option>Selecione</option>';
 
             //estrutura para capturar os dados da API
-            fetch(url).then(obj => obj.json()).then(json =>{
+            fetch(url).then(obj => obj.json()).then(json =>{                
                 //laço para percorrer todos os valores do objeto
                 for (let i = 0; i < json.length; i++) {
-                    //escreve dentro do select id "estados" os options
+                    //adiciona os estados na variável options
                     options += `<option value="${json[i].id}">
                         ${json[i].nome}
-                        </option>`;
+                        </option>`;                    
                 }
-            // preenche o select com o conteúdo da variável options
-            estados.innerHTML = options;   
+                // preenche o select com o conteúdo da variável options
+                estados.innerHTML = options;   
             }).catch(erro => alert(erro));
         })();
 
 
+        // Função para listar as cidades
+        const listarCidades = ()=>{
+            // constante para capturar o select de estados
+            const estados = document.getElementById('estados');
+            // constante para capturar o select de cidades
+            const cidades = document.getElementById('cidades');
+            // constante para capturar o valor do estado selecionado
+            const estadoSelecionado = estados.value;
 
+            // URL da API para buscar as cidades do estado selecionado
+            const url = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoSelecionado}/municipios`;
 
+            // variável para armazenar os options das cidades
+            let options = '<option>Selecione</option>';
 
-        /* (() => {
-            var url = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
-            var select = document.getElementById('estado');
-            
-            fetch(url).then(response => response.json()).then(json => {
-                var options = '<option>Selecione</option>';
-                //DESAFIO: inserir abaixo desta linha um código para ordenar
-                //em ordem alfabética o objeto json
-
-                //laço de repetição
-                for (let index = 0; index < json.length; index++) {
-                    options += '<option>' + json[index].nome + '</option>';
+            // busca as cidades da API
+            fetch(url).then(obj => obj.json()).then(json => {
+                // laço para percorrer as cidades retornadas
+                for (let i = 0; i < json.length; i++) {
+                    options += `<option value="${json[i].nome}">
+                        ${json[i].nome}
+                        </option>`;
                 }
-                select.innerHTML = options;
-            }).catch(erro => console.log(erro));
-        })(); */
+                // preenche o select de cidades com os options
+                cidades.innerHTML = options;                
+            }).catch(erro => alert(erro));
+            
+        }
+
+
 
     </script>
 </body>
